@@ -1,61 +1,70 @@
 import './Main.sass';
-import {useState} from 'react';
+import {useContext, useEffect} from 'react';
 import ToDo from '../ToDo/ToDo';
 import ToDoForm from '../ToDoForm/ToDoForm';
-
-export interface ToDoState { 
-  id: number; 
-  task: string; 
-  complete: boolean; 
-}
+import { ToDoContext } from '../../provider/Provider';
+import { ToDoState } from '../../state/reducer';
 
 const Main: React.FC = () => {
-  const [todo, setTodo] = useState<ToDoState[]>([])
+  const {getToDoList, toDoList, updateToDo, deleteToDo, createToDo} = useContext(ToDoContext)
 
-  const addTask = (tasksInput: string) => {
+  useEffect(() => {
+    getToDoList()
+  }, [])
+
+  const addTask = async (tasksInput: string) => {
     if (tasksInput) {
-      const newItem = {
-        id: Math.round(Math.random() * 1000000),
-        task: tasksInput,
-        complete: false
-      }
-      setTodo([...todo, newItem])
+      createToDo(tasksInput)
     }
   }
 
-  const removeTask = (id: number) => {
-    setTodo([...todo.filter(item => item.id !== id)])
+  const handleToggle = (todo: ToDoState) => {
+    updateToDo({
+      ...todo,
+      completed: !todo.completed
+    })
   }
 
-  const handleToggle = (id: number) => {
-    setTodo([
-      ...todo.map(item => 
-        item.id === id ? {...item, complete: !item.complete} : {...item}
-      )
-    ])
-    console.log(todo)
+  const handleChangeToDo = (todo: ToDoState) => {
+    updateToDo(todo)
   }
+
+  const inProgressToDoList = (todos: ToDoState[]) => todos.filter(item => !item.completed)
+
+  const completeToDoList = (todos: ToDoState[]) => todos.filter(item => item.completed)
 
   return (
     <main className='main'>
       <div className='main-todo__list'>
         <div className='main-task__add'>
           <ToDoForm addTask={addTask}/>
-          <span className='main-task__total'>Total: {todo.length}</span>
-          <h2 className='main-task__title'>To do ({todo.length})</h2>
-          {todo.map(item => {
+          <span className='main-task__total'>Total: {toDoList.length}</span>
+          <h2 className='main-task__title'>To do ({inProgressToDoList(toDoList).length})</h2>
+          {inProgressToDoList(toDoList).map(item => {
             return (
               <ToDo
                 key={item.id}
                 todo={item}
                 toggleTask={handleToggle}
-                removeTask={removeTask}
+                removeTask={deleteToDo}
+                updateTask={handleChangeToDo}
               />
             )
           })}
         </div>
         <div className='main-task__complete'>
-          <h2 className='main-task__complete__title'>Completed ({todo.length})</h2>
+          <h2 className='main-task__complete__title'>Completed ({completeToDoList(toDoList).length})</h2>
+          {completeToDoList(toDoList).map(item => {
+            return (
+              <ToDo
+                key={item.id}
+                todo={item}
+                toggleTask={handleToggle}
+                removeTask={deleteToDo}
+                updateTask={updateToDo}
+              />
+            )
+          })}
         </div>
       </div>
     </main>

@@ -15,11 +15,11 @@ const ToDoForm: React.FC<ToDoFormProps> = ({addTask}) => {
   }
 
   const handleChange = (e: FormEvent) => {
-    let target = e.target as HTMLInputElement;
+    let target = e.currentTarget as HTMLInputElement;
     setTasksInput(target.value)
   }
 
-  const handleKeySubmit = (e: any) => {
+  const handleKeySubmit = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter') {
       handleSubmit(e)
     }
