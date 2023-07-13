@@ -24,27 +24,22 @@ export const initialState: State = {
 export const reducer = (state = initialState, action: ReducerAction) => {
   switch (action.type) {
     case CountAction.SET_TODOS_TYPE:
-      console.log('sssss', action)
-
       return {
         ...state,
         todos: action.payload
       }
     case CountAction.ADD_TODO_TYPE:
-      console.log(action)
       return {
         ...state,
         todos: [...state.todos, action] 
       }
     case CountAction.UPDATE_TODO_TYPE:
-      console.log('1111', action)
       const todoIndex = state.todos.findIndex((item) => item.id === action.payload.id)
       return {
         ...state,
         todos: [...state.todos.slice(0, todoIndex), action.payload, ...state.todos.slice(todoIndex + 1)]
       }
     case CountAction.DELETE_TODO_TYPE:
-      console.log('2222', action)
       return {
         ...state,
         todos: state.todos.filter(todo => todo.id !== action.payload)

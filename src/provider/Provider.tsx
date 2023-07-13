@@ -36,7 +36,6 @@ export const Provider = ({children}: {children: ReactNode}) => {
   }
 
   const updateToDo = async (todo: ToDoState) => {
-    console.log(todo)
     const response = await toDoService.update(todo)
     dispatch({
       type: CountAction.UPDATE_TODO_TYPE,
@@ -45,7 +44,6 @@ export const Provider = ({children}: {children: ReactNode}) => {
   }
 
   const deleteToDo = async (id: number) => {
-    console.log(id)
     await toDoService.delete(id)
     dispatch({
       type: CountAction.DELETE_TODO_TYPE,
